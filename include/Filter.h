@@ -7,6 +7,8 @@
 using namespace std;
 
 
+
+
 bool compareStrings(const string& eventValue,const string& operation,const string& targetValue);
 
 bool compareNumbers(double eventValue,const string& operation,double targetValue);

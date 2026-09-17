@@ -6,6 +6,7 @@
 #include <algorithm>
 using std::string;
 #include "Event.h"
+#include "Validate.h"
 
 vector<Event> loadEvents(std::ifstream& file, const string& filename)
 {
@@ -39,8 +40,15 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
                     event.event_type=event_type;
                     event.severity = severity;
 
+                    if(validEvent(event)){
+                        std::cout<< "Valid event"<<std::endl;
+                        events.push_back(event);
+                    }
+                    else{
+                        std::cout<< "Invalid event"<<std::endl;
+                    }
 
-                    events.push_back(event);
+                    
                 }
                 catch (const std::invalid_argument &e)
                 {
