@@ -13,8 +13,17 @@ bool validSeverity(const string& severity){
     severity =="CRITICAL";
 };
 
+bool allFields(const Event& event){
+    if(event.event_type.size()>0&&event.timestamp.size()>0){
+        return true;
+    }
+   return false;
+    
+};
+
+
 bool validEvent(const Event& event){
     return validLatitude(event.latitude) &&
     validLongitude(event.longitude) && 
-    validSeverity(event.severity);
+    validSeverity(event.severity) && allFields(event);
 };
