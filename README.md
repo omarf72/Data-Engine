@@ -111,9 +111,6 @@ The long-term goal of this project is to develop a more complete C++ data proces
 
 Planned areas of development include:
 
-* Input validation
-* Unit testing with GoogleTest
-* CMake build configuration
 * Continuous Integration with GitHub Actions
 * Performance benchmarking
 * Large dataset processing
