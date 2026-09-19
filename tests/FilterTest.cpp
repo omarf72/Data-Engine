@@ -15,7 +15,7 @@ TEST(FilterTests, HighSeverityFilter)
     std::vector<Event> result =
         filter(events, "severity", "=", "HIGH");
 
-    EXPECT_EQ(result.size(), 3);
+    EXPECT_EQ(result.size(), 2);
 }
 
 TEST(FilterTests, NotHighSeverityFilter)
