@@ -43,8 +43,6 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ```
 
-
-
 ### Command-Line Interface
 
 The application supports command-line operations for interacting with the dataset.
@@ -97,14 +95,6 @@ The workflow is located at:
 .github/workflows/ci.yml
 ```
 
-To run the same checks locally:
-
-```bash
-cmake -S . -B build
-cmake --build build
-ctest --test-dir build --output-on-failure
-```
-
 ## Project Structure
 
 ```text
@@ -139,8 +129,11 @@ Data-Engine/
 
 * **C++**
 * **Standard Template Library (STL)**
-* **Git / GitHub**
+* **CMake**
+* **GoogleTest**
+* **GitHub Actions**
 * **CSV Data Processing**
+* **Git / GitHub**
 
 Additional development tools and technologies will be introduced as the project evolves.
 
