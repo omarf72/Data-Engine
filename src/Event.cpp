@@ -13,12 +13,11 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
 
     string line;
     vector<Event> events;
-    
-    
+    int row=2;
 
     file.open(filename, std::ios::in);
     if (file.is_open())
-    {
+    { 
         getline(file, line);
         while (getline(file, line))
         {
@@ -40,13 +39,23 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
                     event.event_type=event_type;
                     event.severity = severity;
 
-                    if(validEvent(event)){
-                        std::cout<< "Valid event"<<std::endl;
+
+                    const auto errors = validateEvent(event);
+
+                    if (errors.empty()) {
+                        std::cout << "Valid event\n";
                         events.push_back(event);
+                    } else {
+                        std::cout << "Invalid event on row: "
+                                  << row << '\n';
+
+                        for (const auto& error : errors) {
+                            std::cout << "  " << error << '\n';
+                        }
                     }
-                    else{
-                        std::cout<< "Invalid event"<<std::endl;
-                    }
+
+                    ++row;
+
 
                     
                 }

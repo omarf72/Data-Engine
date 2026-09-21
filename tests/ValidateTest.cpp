@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "Validate.h"
-#include "Event.h"
+#include <algorithm>
+#include <string>
+#include <vector>
 
-// ====================
-// Valid Event Tests
-// ====================
+#include "Event.h"
+#include "Validate.h"
 
 TEST(ValidatorTest, ValidEvent)
 {
@@ -16,98 +16,85 @@ TEST(ValidatorTest, ValidEvent)
         "HIGH"
     };
 
-    EXPECT_TRUE(validEvent(event));
+    const auto errors = validateEvent(event);
+
+    EXPECT_TRUE(errors.empty());
 }
-
-
-// ====================
-// Invalid Coordinate Tests
-// ====================
 
 TEST(ValidatorTest, InvalidLatitude)
 {
-    Event event{
-        "2026-01-01",
-        100.0,
-        -73.0,
-        "LOGIN",
-        "HIGH"
-    };
+    Event event{"2026-01-01", 100.0, -73.0, "LOGIN", "HIGH"};
 
-    EXPECT_FALSE(validEvent(event));
+    const auto errors = validateEvent(event);
+
+    ASSERT_EQ(errors.size(), 1);
+    EXPECT_NE(errors[0].find("Invalid latitude"), std::string::npos);
 }
 
 TEST(ValidatorTest, InvalidLongitude)
 {
+    Event event{"2026-01-01", 42.0, 200.0, "LOGIN", "HIGH"};
+
+    const auto errors = validateEvent(event);
+
+    ASSERT_EQ(errors.size(), 1);
+    EXPECT_NE(errors[0].find("Invalid longitude"), std::string::npos);
+}
+
+TEST(ValidatorTest, InvalidLatitudeAndLongitude)
+{
+    Event event{"2026-01-01", 100.0, 200.0, "LOGIN", "HIGH"};
+
+    const auto errors = validateEvent(event);
+
+    ASSERT_EQ(errors.size(), 2);
+
+    EXPECT_NE(
+        std::find_if(errors.begin(), errors.end(), [](const std::string& error) {
+            return error.find("Invalid latitude") != std::string::npos;
+        }),
+        errors.end()
+    );
+
+    EXPECT_NE(
+        std::find_if(errors.begin(), errors.end(), [](const std::string& error) {
+            return error.find("Invalid longitude") != std::string::npos;
+        }),
+        errors.end()
+    );
+}
+
+TEST(ValidatorTest, ReportsAllInvalidFields)
+{
     Event event{
-        "2026-01-01",
-        42.0,
+        "",
+        100.0,
         200.0,
-        "LOGIN",
-        "HIGH"
-    };
-
-    EXPECT_FALSE(validEvent(event));
-}
-
-
-// ====================
-// Missing Field Tests
-// ====================
-
-TEST(ValidatorTest, MissingTimestamp)
-{
-    Event event{
         "",
-        42.0,
-        -73.0,
-        "LOGIN",
-        "HIGH"
-    };
-
-    EXPECT_FALSE(validEvent(event));
-}
-
-TEST(ValidatorTest, MissingEventType)
-{
-    Event event{
-        "2026-01-01",
-        42.0,
-        -73.0,
-        "",
-        "HIGH"
-    };
-
-    EXPECT_FALSE(validEvent(event));
-}
-
-TEST(ValidatorTest, MissingSeverity)
-{
-    Event event{
-        "2026-01-01",
-        42.0,
-        -73.0,
-        "LOGIN",
-        ""
-    };
-
-    EXPECT_FALSE(validEvent(event));
-}
-
-
-// ====================
-// Invalid Value Tests
-// ====================
-
-TEST(ValidatorTest, InvalidSeverity)
-{
-    Event event{
-        "2026-01-01",
-        42.0,
-        -73.0,
-        "LOGIN",
         "EXTREME"
     };
 
-    EXPECT_FALSE(validEvent(event));
+    const auto errors = validateEvent(event);
+
+    ASSERT_EQ(errors.size(), 5);
+
+    EXPECT_NE(std::find_if(errors.begin(), errors.end(), [](const auto& error) {
+        return error.find("Invalid latitude") != std::string::npos;
+    }), errors.end());
+
+    EXPECT_NE(std::find_if(errors.begin(), errors.end(), [](const auto& error) {
+        return error.find("Invalid longitude") != std::string::npos;
+    }), errors.end());
+
+    EXPECT_NE(std::find_if(errors.begin(), errors.end(), [](const auto& error) {
+        return error.find("Invalid severity") != std::string::npos;
+    }), errors.end());
+
+    EXPECT_NE(std::find_if(errors.begin(), errors.end(), [](const auto& error) {
+        return error.find("Event type was not entered") != std::string::npos;
+    }), errors.end());
+
+    EXPECT_NE(std::find_if(errors.begin(), errors.end(), [](const auto& error) {
+        return error.find("Timestamp was not entered") != std::string::npos;
+    }), errors.end());
 }

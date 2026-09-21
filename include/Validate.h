@@ -1,14 +1,10 @@
-# pragma once
+#pragma once
 #include <string>
 #include "Event.h"
 using std::string;
 
-bool validLatitude(double latitude);
 
-bool validLongitude(double longitude);
 
-bool validSeverity(const string& severity);
+std::vector<string> validateEvent(const Event &event);
 
-bool validEvent(const Event& event);
 
-bool allFields(const Event& event);
