@@ -3,7 +3,7 @@
 #include <vector>
 using std::cout;
 using std::endl;
-
+ 
 
 std::vector<std::string> validateEvent(const Event& event)
 {

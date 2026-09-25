@@ -8,16 +8,16 @@ using std::string;
 #include "Event.h"
 #include "Validate.h"
 
-vector<Event> loadEvents(std::ifstream& file, const string& filename)
+vector<Event> loadEvents(std::ifstream &file, const string &filename)
 {
 
     string line;
     vector<Event> events;
-    int row=2;
+    int row = 2;
 
     file.open(filename, std::ios::in);
     if (file.is_open())
-    { 
+    {
         getline(file, line);
         while (getline(file, line))
         {
@@ -27,8 +27,13 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
                 getline(ss, latitude, ',') &&
                 getline(ss, longitude, ',') &&
                 getline(ss, event_type, ',') &&
-                getline(ss, severity, ','))
+                getline(ss, severity))
             {
+
+                if (!severity.empty() && severity.back() == '\r')
+                {
+                    severity.pop_back();
+                }
                 try
                 {
                     Event event;
@@ -36,28 +41,26 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
                     event.timestamp = timestamp;
                     event.latitude = stod(latitude);
                     event.longitude = stod(longitude);
-                    event.event_type=event_type;
+                    event.event_type = event_type;
                     event.severity = severity;
-
 
                     const auto errors = validateEvent(event);
 
-                    if (errors.empty()) {
-                        std::cout << "Valid event\n";
+                    if (errors.empty())
+                    {
                         events.push_back(event);
-                    } else {
+                    }
+                    else
+                    {
                         std::cout << "Invalid event on row: "
                                   << row << '\n';
 
-                        for (const auto& error : errors) {
+                        for (const auto &error : errors)
+                        {
                             std::cout << "  " << error << '\n';
                         }
                     }
-
                     ++row;
-
-
-                    
                 }
                 catch (const std::invalid_argument &e)
                 {
@@ -71,7 +74,8 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
         }
         file.close();
     }
-    else{
+    else
+    {
         std::cerr << "Error: Could not open " << filename << "\n";
         return events;
     }
@@ -82,5 +86,4 @@ vector<Event> loadEvents(std::ifstream& file, const string& filename)
     // }
 
     return events;
-
 }

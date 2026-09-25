@@ -1,5 +1,8 @@
 bin/
+build-asan/
 build/
 .DS_Store
 
+
 .vscode/
+
