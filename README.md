@@ -36,12 +36,31 @@ cmake -S . -B build
 cmake --build build
 ./build/Data-Engine
 ```
+#Build memory checking 
+```bash
+cmake -S . -B build-asan \                      
+    -DCMAKE_CXX_FLAGS="-fsanitize=address -fno-omit-frame-pointer" \
+    -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address"
+
+cmake --build build-asan  
+```
+
+
 
 ## Run Tests
 
 ```bash
 ctest --test-dir build --output-on-failure
 ```
+## Running google test with memory check
+
+```bash
+ctest --test-dir build-asan --output-on-failure
+```
+
+## Running Googel Bechmarks on Features
+```
+./build/DataEngineBenchmarks
 
 ### Command-Line Interface
 
@@ -84,6 +103,23 @@ Event Types:
   FLOOD: 12
   STORM: 7
 ```
+## Benchmark Results
+
+| Benchmark | 1,000 rows | 10,000 rows | 100,000 rows |
+| --- | ---: | ---: | ---: |
+| LoadEvents | 899,608 ns | 3,657,964 ns | 36,035,127 ns |
+| FilterBySeverity | 7,192 ns | 82,496 ns | 974,128 ns |
+| FilterByEventType | 4,988 ns | 75,528 ns | 919,558 ns |
+| FilterByLatitude | 3,868 ns | 62,396 ns | 605,595 ns |
+| FilterByLongitude | 5,631 ns | 61,063 ns | 597,410 ns |
+| Statistics | 39,928 ns | 418,155 ns | 4,220,160 ns |
+
+> Units are in nanoseconds (ns). Lower values indicate better performance.
+
+### Summary
+
+These benchmarks highlight the relative cost of each operation across increasing dataset sizes. Loading data remains the most expensive step, while filtering by a single field remains highly efficient at scale.
+
 
 ## GitHub Actions
 
@@ -128,9 +164,12 @@ Data-Engine/
 ## Technologies
 
 * **C++**
+* **Python**
 * **Standard Template Library (STL)**
 * **CMake**
 * **GoogleTest**
+* **GoogleBenchMark**
+* **AddressSanitizer**
 * **GitHub Actions**
 * **CSV Data Processing**
 * **Git / GitHub**
@@ -143,8 +182,7 @@ The long-term goal of this project is to develop a more complete C++ data proces
 
 Planned areas of development include:
 
-* Performance benchmarking
-* Large dataset processing
+
 * Multithreaded processing
 * Improved command-line argument handling
 * Cross-platform development considerations
@@ -158,5 +196,5 @@ This project was created as a hands-on way to strengthen my C++ development skil
 
 **In active development.**
 
-The current version supports CSV data loading, filtering, statistics, and command-line operations. Additional validation, testing, build automation, and performance features will be added as development continues.
+The current version supports CSV data loading, filtering, statistics,command-line operations , validation, testing, build automation, and performance features. Additional  will be added as development continues.
 
